@@ -44,6 +44,15 @@ class MovieForm extends Form {
 
     this.setState({ data: this.maptoViewModel(movie) });
   }
+  maptoNewMovie(movieId) {
+    // return(
+    //   _id: movieId,
+    //   title:
+    //   genreId: currentTarget.props.value,
+    //   numberInStock: currentTarget.props.value,
+    //   dailyRentalRate: currentTarget.props.value,
+    // )
+  }
   maptoViewModel(movie) {
     return {
       _id: movie._id,
