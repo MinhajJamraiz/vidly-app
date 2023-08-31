@@ -4,7 +4,7 @@ class Select extends Component {
   render() {
     const { name, label, error, options, ...rest } = this.props;
     return (
-      <div class="form-group mb-3">
+      <div className="form-group mb-3">
         <label htmlFor={name} className="form-label">
           {label}
         </label>

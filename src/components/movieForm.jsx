@@ -12,7 +12,7 @@ class MovieForm extends Form {
       title: "",
       genreId: "",
       numberInStock: "",
-      dailyRetalRate: "",
+      dailyRentalRate: "",
     },
     errors: {},
     genres: [],
@@ -32,27 +32,25 @@ class MovieForm extends Form {
       .max(5)
       .min(0),
   };
+
   componentDidMount() {
     const genres = getGenres();
     this.setState({ genres });
 
     const movieId = this.props.match.params.id;
-    if (movieId === "new") return;
+    if (movieId === "newMovie") {
+      const data = this.state.data;
+      data._id = "newMovie";
+      this.setState({ data });
+      return;
+    }
 
     const movie = getMovie(movieId);
-    if (!movie) return this.props.history.replace("/not-found");
 
+    if (!movie) return this.props.history.replace("/not-found");
     this.setState({ data: this.maptoViewModel(movie) });
   }
-  maptoNewMovie(movieId) {
-    // return(
-    //   _id: movieId,
-    //   title:
-    //   genreId: currentTarget.props.value,
-    //   numberInStock: currentTarget.props.value,
-    //   dailyRentalRate: currentTarget.props.value,
-    // )
-  }
+
   maptoViewModel(movie) {
     return {
       _id: movie._id,
@@ -72,11 +70,11 @@ class MovieForm extends Form {
   render() {
     return (
       <form>
-        <legend>New Movie</legend>
+        <legend>{this.state.data._id}</legend>
         {this.renderInput("title", "Title")}
         {this.renderSelect("genreId", "Genre", this.state.genres)}
-        {this.renderInput("numberInStock", "Stock")}
-        {this.renderInput("dailyRentalRate", "Rate")}
+        {this.renderInput("numberInStock", "Stock", "number")}
+        {this.renderInput("dailyRentalRate", "Rate", "number")}
 
         {this.renderButton("Save")}
       </form>

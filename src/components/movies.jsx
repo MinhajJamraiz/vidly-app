@@ -97,7 +97,7 @@ class Movies extends Component {
           <Link
             style={{ margin: 10 }}
             className=" btn btn-primary"
-            to="/movies/new">
+            to="/movies/newMovie">
             New Movie
           </Link>
           <p>Showing {filtered.length} movies in the database.</p>
