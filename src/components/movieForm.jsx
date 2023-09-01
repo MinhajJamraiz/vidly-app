@@ -18,7 +18,7 @@ class MovieForm extends Form {
     genres: [],
   };
   schema = {
-    _id: Joi.string(),
+    _id: Joi.string().allow("", null),
     title: Joi.string().required().label("Title"),
     genreId: Joi.string().required().label("Genre"),
     numberInStock: Joi.number()
@@ -39,9 +39,9 @@ class MovieForm extends Form {
 
     const movieId = this.props.match.params.id;
     if (movieId === "newMovie") {
-      const data = this.state.data;
-      data._id = "newMovie";
-      this.setState({ data });
+      // const data = this.state.data;
+      // data._id = "newMovie";
+      // this.setState({ data });
       return;
     }
 
@@ -70,7 +70,9 @@ class MovieForm extends Form {
   render() {
     return (
       <form>
-        <legend>{this.state.data._id}</legend>
+        <legend>
+          {this.state.data._id === "" ? "New Movie " : "Update Movie"}
+        </legend>
         {this.renderInput("title", "Title")}
         {this.renderSelect("genreId", "Genre", this.state.genres)}
         {this.renderInput("numberInStock", "Stock", "number")}
