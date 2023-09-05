@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.css";
-import { getMovies } from "../services/fakeMovieService";
+import { deleteMovie, getMovies } from "../services/movieService";
 import Pagination from "./pagination";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./ListGroup";
-import { getGenres } from "../services/fakeGenreService";
+import { getGenres } from "../services/genreService";
 import MoviesTable from "./moviesTable";
 import _ from "lodash";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import SearchBox from "./searchBox";
 
 class Movies extends Component {
@@ -20,17 +21,27 @@ class Movies extends Component {
     pageSize: 4,
     sortColumn: { path: "title", order: "asc" },
   };
-  componentDidMount() {
-    const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
-    this.setState({
-      movies: getMovies(),
-      genres,
-    });
+  async componentDidMount() {
+    const { data } = await getGenres();
+    const genres = [{ _id: "", name: "All Genres" }, ...data];
+    const { data: movies } = await getMovies();
+    this.setState({ movies, genres });
   }
 
-  handleDelete = (movie) => {
-    const movies = this.state.movies.filter((m) => m._id !== movie._id);
+  handleDelete = async (movie) => {
+    const originalMovies = this.state.movies;
+    const movies = originalMovies.filter((m) => m._id !== movie._id);
     this.setState({ movies });
+
+    try {
+      await deleteMovie(movie._id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404) {
+        toast.error("This movie has already been deleted");
+
+        this.setState({ movies: originalMovies });
+      }
+    }
   };
   handleLike = (movie) => {
     const movies = [...this.state.movies];
@@ -68,7 +79,7 @@ class Movies extends Component {
   //   return { totalCount: filtered.length, data: movies };
   // };
   render() {
-    const { length: count } = this.state.movies;
+    // const { length: count } = this.state.movies;
     const { pageSize, currentGenre, currentPage, sortColumn, searchQuery } =
       this.state;
     let filtered = this.state.movies;
@@ -83,7 +94,6 @@ class Movies extends Component {
     const ordered = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
     const movies = paginate(ordered, currentPage, pageSize);
 
-    if (count === 0) return <p>There are no movies in the list</p>;
     return (
       <section className="row mt-5">
         <section className="col-3">
